@@ -10,12 +10,20 @@ parser.add_argument('svgfile')
 parser.add_argument(
     "-s", "--scale", help="Ammount to scale image. Provide 0 as argument to fit the window", type=float)
 parser.add_argument(
+    "-x", "--xhome", help="Origin point for X", type=int, default=0)
+parser.add_argument(
+    "-y", "--yhome", help="Origin point for Y", type=int, default=0)
+parser.add_argument(
     "-f", "--fill", help="Flag. Set to fill in polygons", action='store_true')
+parser.add_argument(
+    "-c", "--dontclear", help="Flag. Set to disable clearing screen before starting to draw", action='store_true')
 parser.add_argument(
     "-e", "--escape", help="Flag. Set to replace ascii ESC character with escapped version (\\033)", action='store_true')
 
 
 def head_to(x, y, draw=True):
+    x = x + args.xhome
+    y = y+ args.yhome
     if draw:
         string = "V[" + str(round(x)) + "," + str(round(y)) + "]"
     else:
@@ -52,7 +60,7 @@ def draw_multipolygon(mpoly, fill=False):
 args = parser.parse_args()
 
 svg_file = args.svgfile
-windowSize = {'width': 800, 'height': 480}
+windowSize = {'width': 800-args.xhome, 'height': 480-args.yhome}
 orig_paths, orig_attrs, svg_attr = svg2paths2(svg_file)
 if 'width' in svg_attr and args.scale is not None:
     origWidthFloat = float(svg_attr['width'].strip("px"))
@@ -90,12 +98,17 @@ for path in paths:
         points = np.append(points, points[0])
         poly.append(points)
     polys.append([[(p.real, p.imag) for p in pl] for pl in poly])
+
 if args.escape:
     # Start regis command, clear screen, set cursor on.
-    RegisString = "\\033P1p S(I0,C1,E)"
+    RegisString = "\\033P1p"
 else:
     # Start regis command, clear screen, set cursor on.
-    RegisString = "\033P1p S(I0,C1,E)"
+    RegisString = "\033P1p"
+if args.dontclear:
+    RegisString += "S(I0,C1)"
+else:
+    RegisString += "S(I0,C1,E)"
 
 for poly, attr in zip(polys, attrs):
     RegisString += draw_multipolygon(poly, fill=args.fill)
