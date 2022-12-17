@@ -1,6 +1,7 @@
 from svgpathtools import svg2paths2
 from svgpathtools.parser import parse_transform
 from svgpathtools.path import transform as path_transform
+import re
 from math import ceil
 import numpy as np
 import argparse
@@ -32,15 +33,12 @@ def head_to(x, y, draw=True):
 
 
 def draw_polygon(poly, fill=False):
-    # t.color(fill,fill)
     p = poly[0]
-
     stringLocal = head_to(p[0], (p[1]), draw=False)
     if fill:
         stringLocal += "\nF("
     for p in poly[1:]:
         stringLocal += head_to(p[0], (p[1]))
-    # t.up()
     if fill:
         stringLocal += ")"
     return stringLocal
@@ -60,12 +58,18 @@ def draw_multipolygon(mpoly, fill=False):
 args = parser.parse_args()
 
 svg_file = args.svgfile
-windowSize = {'width': 800-args.xhome, 'height': 480-args.yhome}
+windowSize = {'width': 800, 'height': 480}
 orig_paths, orig_attrs, svg_attr = svg2paths2(svg_file)
-if 'width' in svg_attr and args.scale is not None:
-    origWidthFloat = float(svg_attr['width'].strip("px"))
-    origHeightFloat = float(svg_attr['height'].strip("px"))
-    if args.scale == 0:
+if args.scale is not None:
+    if 'viewBox' in svg_attr:
+        origWidth = svg_attr['viewBox'].split(' ')[2]
+        origHeight = svg_attr['viewBox'].split(' ')[3]
+    elif 'width' in svg_attr:
+        origWidth = re.sub('[A-Za-z]','',svg_attr['width'])
+        origHeight = re.sub('[A-Za-z]','',svg_attr['height']) 
+    if args.scale == 0: #'width' in svg_attr and
+        origWidthFloat = float(origWidth)
+        origHeightFloat = float(origHeight)
         if (windowSize['width'] / origWidthFloat) < (windowSize['height'] / origHeightFloat):
             # limited by width
             scaleRatio = (windowSize['width'] - 10) / origWidthFloat

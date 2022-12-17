@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "args": "../python/xmas.svg -x 20 -y 20 -c",
+            "args": "../python/xmas2.svg -s 0",
             "console": "integratedTerminal",
             "justMyCode": true
         }
