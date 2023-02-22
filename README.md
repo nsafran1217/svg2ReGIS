@@ -12,7 +12,7 @@ Usage:
 
 -f - Flag. Provide it to fill in the polygons drawn
 
--e - Flag. Provide it to escape the ESC character. It just replaces \033 with \\033 in the output. Useful if you want to print it out with something like printf
+-e - Flag. Provide it to escape the ESC character. It just replaces \033 with \\\033 in the output. Useful if you want to print it out with something like printf
 
 -c - Flag. Provide to disable clearing the screen before starting to draw
 
