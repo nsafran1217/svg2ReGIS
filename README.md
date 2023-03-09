@@ -16,3 +16,5 @@ Usage:
 
 -c - Flag. Provide to disable clearing the screen before starting to draw
 
+Credit to this post on reddit. A large portion of the code was adapted from the code in this post
+https://www.reddit.com/r/Python/comments/fohqxy/made_a_program_that_reads_svg_files_and_draws_it/
